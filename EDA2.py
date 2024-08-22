@@ -7,28 +7,27 @@ def load_data():
     return pd.read_csv('streamlitdata.csv')
 
 def main():
-    # Set the page title
     st.title("Malaysia Invasive Plant Species Distribution Dashboard")
     
-    # Load the data
+    # Load the df
     df = load_data()
 
-    # Sidebar - Species selection for Distribution Map and Species Count
+    # Sidebar for Species selection for Distribution Map and Species Count
     st.sidebar.subheader("Select Species for Distribution Map")
     species_list = df['scientific_name'].unique()
     selected_species = st.sidebar.multiselect('Select Species', species_list, species_list)
 
-    # Sidebar - Data Summary
+    # Sidebar for Data Summary
     st.sidebar.subheader("Data Summary")
     st.sidebar.write(f"Total species: {df['scientific_name'].nunique()}")
     st.sidebar.write(f"Total locations: {df[['latitude', 'longitude']].drop_duplicates().shape[0]}")
     st.sidebar.write(f"Total records: {df.shape[0]}")
 
-    # Sidebar - Species selection for Comparison Map (2 to 8 species)
+    # Sidebar for Species selection for Comparison Map
     st.sidebar.subheader("Select Species for Comparison Map")
     selected_comparison_species = st.sidebar.multiselect('Select Species to Compare', species_list, species_list[:2], max_selections=8)
 
-    # Sidebar - Species selection for Density Heatmap
+    # Sidebar for Species selection for Density Heatmap
     st.sidebar.subheader("Select Species for Density Heatmap")
     selected_heatmap_species = st.sidebar.selectbox('Select Species', species_list)
 
@@ -39,9 +38,6 @@ def main():
     if filtered_df.empty:
         st.warning("No data available for the selected species.")
     else:
-        # Set your Mapbox access token
-        px.set_mapbox_access_token("your_actual_mapbox_access_token")
-
         # Species Distribution Map
         st.subheader("Species Distribution Map")
         fig = px.scatter_mapbox(
@@ -73,7 +69,7 @@ def main():
                 height=600,
                 title="Species Comparison Map"
             )
-            fig_compare.update_layout(mapbox_style="carto-positron")
+            fig_compare.update_layout(mapbox_style="open-street-map")
             st.plotly_chart(fig_compare)
 
         # Density Heatmap
@@ -90,7 +86,7 @@ def main():
                 height=600,
                 title=f"{selected_heatmap_species} Density Heatmap"
             )
-            fig_heatmap.update_layout(mapbox_style="stamen-toner")
+            fig_heatmap.update_layout(mapbox_style="open-street-map")
             st.plotly_chart(fig_heatmap)
 
     # Species Count by Location
