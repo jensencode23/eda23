@@ -37,7 +37,7 @@ def main():
 
     # Check if filtered_df is not empty
     if not filtered_df.empty:
-        px.set_mapbox_access_token("maptokenaccess")
+        px.set_mapbox_access_token("your_mapbox_access_token")
 
         # Species Distribution Map
         st.subheader("Species Distribution Map")
