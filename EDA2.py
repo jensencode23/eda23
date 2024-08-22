@@ -2,15 +2,15 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
-# Loading plant data
-streamlit_df = pd.read_csv('streamlitdata.csv')
-
+# Load the data
 def load_data():
-    return streamlit_df
+    return pd.read_csv('streamlitdata.csv')
 
 def main():
-    # Title
+    # Set the page title
     st.title("Malaysia Invasive Plant Species Distribution Dashboard")
+    
+    # Load the data
     df = load_data()
 
     # Sidebar - Species selection for Distribution Map and Species Count
@@ -35,9 +35,12 @@ def main():
     # Filter function
     filtered_df = df[df['scientific_name'].isin(selected_species)]
 
-    # Check if filtered_df is not empty
-    if not filtered_df.empty:
-        px.set_mapbox_access_token("your_mapbox_access_token")
+    # Check if the filtered DataFrame is not empty
+    if filtered_df.empty:
+        st.warning("No data available for the selected species.")
+    else:
+        # Set your Mapbox access token
+        px.set_mapbox_access_token("your_actual_mapbox_access_token")
 
         # Species Distribution Map
         st.subheader("Species Distribution Map")
@@ -52,10 +55,10 @@ def main():
             height=600,
             title="Species Distribution Map"
         )
-        fig.update_layout(mapbox_style="stamen-terrain")
+        fig.update_layout(mapbox_style="open-street-map")
         st.plotly_chart(fig)
         
-        # Species Comparison
+        # Species Comparison Map
         if len(selected_comparison_species) >= 2:
             st.subheader("Species Comparison Map")
             comparison_df = df[df['scientific_name'].isin(selected_comparison_species)]
@@ -91,10 +94,11 @@ def main():
             st.plotly_chart(fig_heatmap)
 
     # Species Count by Location
-    st.subheader("Species Count by Location")
-    species_count = filtered_df.groupby('scientific_name').size().reset_index(name='counts')
-    species_bar_chart = px.bar(species_count, x='scientific_name', y='counts', title='Species Count')
-    st.plotly_chart(species_bar_chart)
+    if not filtered_df.empty:
+        st.subheader("Species Count by Location")
+        species_count = filtered_df.groupby('scientific_name').size().reset_index(name='counts')
+        species_bar_chart = px.bar(species_count, x='scientific_name', y='counts', title='Species Count')
+        st.plotly_chart(species_bar_chart)
 
 if __name__ == "__main__":
     main()
