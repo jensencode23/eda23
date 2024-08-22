@@ -1,0 +1,10 @@
+jupyter
+opencv-python
+matplotlib
+geopandas
+pandas
+seaborn
+streamlit
+plotly
+scikit-learn
+scikit-image
